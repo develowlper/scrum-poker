@@ -10,7 +10,6 @@ export const createGame = async (values: ICreateGame) => {
     name: values.name,
     publicId: nanoid(6).toLowerCase(),
   };
-  console.log(gameToCreate);
 
   const { data } = await supabase
     .from('games')

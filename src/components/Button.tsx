@@ -1,9 +1,12 @@
+import clsx from 'clsx';
+
 export default function Button({
+  highlighted,
   children,
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: { highlighted: boolean } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button className="btn" {...props}>
+    <button className={clsx('btn', highlighted && 'btn-primary')} {...props}>
       {children}
     </button>
   );

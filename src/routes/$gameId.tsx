@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { getGame } from '../api/game';
 import Headline from '../components/Headline';
@@ -8,13 +8,16 @@ import Button from '../components/Button';
 import { useUserStore } from '../stores/user';
 import { useAppForm } from '../hooks/form';
 import { z } from 'zod';
+import { createPlayer, getPlayer } from '../api/player';
+import { createResult, getResult, ICreateResult } from '../api/result';
+import { useMemo } from 'react';
 
 export const Route = createFileRoute('/$gameId')({
   component: RouteComponent,
 });
 
 const EnterNameForm = () => {
-  const setName = useUserStore((state) => state.setName);
+  const setId = useUserStore((state) => state.setId);
 
   const form = useAppForm({
     defaultValues: {
@@ -25,9 +28,9 @@ const EnterNameForm = () => {
         name: z.string().min(1),
       }),
     },
-    onSubmit: ({ value }) => {
-      setName(value.name);
-      // Do something with form d
+    onSubmit: async ({ value }) => {
+      const { publicId } = await createPlayer(value);
+      setId(publicId);
     },
   });
 
@@ -52,12 +55,48 @@ const EnterNameForm = () => {
   );
 };
 
-const StoryPoints = () => {
+const StoryPoints = ({
+  gameId,
+  playerId,
+}: {
+  gameId: string;
+  playerId: string;
+}) => {
+  const resultQueryKey = useMemo(
+    () => ['result', gameId, playerId],
+    [gameId, playerId],
+  );
+
+  const queryClient = useQueryClient();
+
+  const savePointsMutation = useMutation({
+    mutationFn: async (value: ICreateResult) => {
+      const res = await createResult(value);
+      console.log(res);
+      queryClient.invalidateQueries({ queryKey: resultQueryKey });
+    },
+  });
+
+  const { data: result, isPending } = useQuery({
+    queryKey: resultQueryKey,
+    queryFn: async () => getResult(gameId, playerId),
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <div>Please enter your story points:</div>
       {STORY_PONTS.map((point) => (
-        <Button key={point} onClick={() => console.log(point)}>
+        <Button
+          highlighted={result?.points === point}
+          key={point}
+          onClick={() =>
+            savePointsMutation.mutateAsync({ points: point, gameId, playerId })
+          }
+        >
           {point}
         </Button>
       ))}
@@ -73,9 +112,13 @@ function RouteComponent() {
     queryFn: () => getGame(gameId),
   });
 
-  const name = useUserStore((state) => state.name);
+  const id = useUserStore((state) => state.id);
 
-  console.log(name);
+  const { data: player } = useQuery({
+    queryKey: ['player', id],
+    queryFn: () => getPlayer(id as string),
+    enabled: !!id,
+  });
 
   if (isPending) {
     return <div>Loading...</div>;
@@ -83,10 +126,10 @@ function RouteComponent() {
 
   return (
     <div>
-      {name ? (
+      {id ? (
         <>
-          <Headline text={`Welcome ${name} to game${data?.name}`} />
-          <StoryPoints />
+          <Headline text={`Welcome ${player?.name} to game${data?.name}`} />
+          <StoryPoints gameId={gameId} playerId={player?.publicId} />
         </>
       ) : (
         <EnterNameForm />

@@ -2,15 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type UserStore = {
-  name: string;
-  setName: (name: string) => void;
+  id: string | null;
+  setId: (id: string) => void;
 };
 
 export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
-      name: '',
-      setName: (name: string) => set({ name }),
+      id: null,
+      setId: (id: string) => set({ id }),
     }),
     { name: 'scrumPokerUser' },
   ),
