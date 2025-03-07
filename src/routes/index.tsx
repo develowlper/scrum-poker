@@ -1,29 +1,39 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 import { useAppForm } from '../hooks/form';
-import { nanoid } from 'nanoid';
+
 import { z } from 'zod';
+import { useMutation } from '@tanstack/react-query';
+import { createGame, ICreateGame } from '../api/game';
 
 export const Route = createFileRoute('/')({
   component: Index,
 });
 
 function Index() {
+  const navigate = useNavigate();
+
+  const saveGameMutation = useMutation({
+    mutationFn: async (value: ICreateGame) => {
+      return createGame(value);
+    },
+  });
+
   const form = useAppForm({
     defaultValues: {
-      name: '',
-      id: nanoid(6),
+      name: 'Game',
     },
     validators: {
       // Pass a schema or function to validate
       onChange: z.object({
         name: z.string().min(1),
-        id: z.string().length(6),
       }),
-      onSubmit: ({ value }) => {
-        // Do something with form data
-        console.log(value);
-      },
+    },
+    onSubmit: async ({ value }) => {
+      // Do something with form data
+      const res = await saveGameMutation.mutateAsync(value);
+      navigate({ to: `/$gameId`, params: { gameId: res.publicId } });
+      console.log(res);
     },
   });
 
