@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 export interface ICreateResult {
   points: number;
   gameId: string;
-  playerId: string;
+  participantId: string;
 }
 
 export async function createResult(values: ICreateResult) {
@@ -11,7 +11,7 @@ export async function createResult(values: ICreateResult) {
     .from('game_results')
     .select('id')
     .eq('game_id', values.gameId)
-    .eq('player_id', values.playerId)
+    .eq('participant_id', values.participantId)
     .single();
 
   if (hasResult) {
@@ -27,7 +27,7 @@ export async function createResult(values: ICreateResult) {
       {
         points: values.points,
         game_id: values.gameId,
-        player_id: values.playerId,
+        participant_id: values.participantId,
       },
     ])
     .select('*');
@@ -39,12 +39,12 @@ export async function createResult(values: ICreateResult) {
   return data[0];
 }
 
-export async function getResult(gameId: string, playerId: string) {
+export async function getResult(gameId: string, participantId: string) {
   const { data } = await supabase
     .from('game_results')
     .select('points')
     .eq('game_id', gameId)
-    .eq('player_id', playerId)
+    .eq('participant_id', participantId)
     .single();
 
   return data;

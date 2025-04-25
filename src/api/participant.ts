@@ -31,11 +31,29 @@ export async function getParticipantsForGame(
 ): Promise<Participant[]> {
   const { data } = await supabase
     .from<Participant>('participants')
-    .select('player')
+    .select('player, id')
     .eq('game', gameId);
 
   if (!data) {
     throw new Error('Participants not found');
   }
+  return data;
+}
+
+export async function getParticipant(
+  gameId: string,
+  playerId: string,
+): Promise<Participant> {
+  const { data } = await supabase
+    .from<Participant>('participants')
+    .select('id')
+    .eq('game', gameId)
+    .eq('player', playerId)
+    .single();
+
+  if (!data) {
+    throw new Error('Participant not found');
+  }
+
   return data;
 }

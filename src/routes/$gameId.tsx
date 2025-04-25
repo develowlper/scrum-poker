@@ -11,7 +11,11 @@ import { z } from 'zod';
 import { createPlayer, getPlayer, ICreateUser } from '../api/player';
 import { createResult, getResult, ICreateResult } from '../api/result';
 import { useMemo } from 'react';
-import { createParticipant, getParticipantsForGame } from '../api/participant';
+import {
+  createParticipant,
+  getParticipant,
+  getParticipantsForGame,
+} from '../api/participant';
 
 export const Route = createFileRoute('/$gameId')({
   component: RouteComponent,
@@ -66,9 +70,15 @@ const StoryPoints = ({
   gameId: string;
   playerId: string;
 }) => {
+  const { data: participant, isLoading: isParticipantLoading } = useQuery({
+    queryKey: ['particpant', gameId, playerId],
+    queryFn: () => getParticipant(gameId, playerId),
+    enabled: !!playerId,
+  });
+
   const resultQueryKey = useMemo(
-    () => ['result', gameId, playerId],
-    [gameId, playerId],
+    () => ['result', gameId, participant?.id],
+    [gameId, participant],
   );
 
   const queryClient = useQueryClient();
@@ -81,15 +91,18 @@ const StoryPoints = ({
 
   const { variables, isPending: isMutating } = savePointsMutation;
 
-  console.log(savePointsMutation.variables);
-
   const { data: result, isPending } = useQuery({
     queryKey: resultQueryKey,
-    queryFn: async () => getResult(gameId, playerId),
+    queryFn: async () => getResult(gameId, participant?.id || ''),
+    enabled: !!participant?.id,
   });
 
-  if (isPending) {
+  if (isPending || isParticipantLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (!participant) {
+    return <div>Participant not found</div>;
   }
 
   const currentPoints = isMutating ? variables?.points : result?.points;
@@ -102,7 +115,11 @@ const StoryPoints = ({
           highlighted={currentPoints === point}
           key={point}
           onClick={() =>
-            savePointsMutation.mutateAsync({ points: point, gameId, playerId })
+            savePointsMutation.mutateAsync({
+              points: point,
+              gameId,
+              participantId: participant?.id,
+            })
           }
         >
           {point}
