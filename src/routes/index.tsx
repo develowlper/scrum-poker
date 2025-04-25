@@ -19,9 +19,9 @@ function Index() {
     },
   });
 
-  const form = useAppForm({
+  const { handleSubmit, AppField, AppForm, SubmitButton } = useAppForm({
     defaultValues: {
-      name: 'Game',
+      name: '',
     },
     validators: {
       // Pass a schema or function to validate
@@ -29,7 +29,7 @@ function Index() {
         name: z.string().min(1),
       }),
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value }: { value: ICreateGame }) => {
       // Do something with form data
       const res = await saveGameMutation.mutateAsync(value);
       navigate({ to: `/$gameId`, params: { gameId: res.publicId } });
@@ -38,21 +38,23 @@ function Index() {
   });
 
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
+    <div className="flex flex-col p-2 gap-2">
       <form
+        className="w-[350px] flex flex-col gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          handleSubmit();
         }}
       >
-        <form.AppField
+        <AppField
           name="name"
-          children={(field) => <field.TextField label="Name" />}
+          children={(field) => (
+            <field.TextField label="Enter a name for your game:" />
+          )}
         />
-        <form.AppForm>
-          <form.SubmitButton label="Submit" />
-        </form.AppForm>
+        <AppForm>
+          <SubmitButton label="Submit" />
+        </AppForm>
       </form>
     </div>
   );

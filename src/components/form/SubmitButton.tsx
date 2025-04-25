@@ -6,7 +6,11 @@ export default function SubmitButton({ label }: { label: string }) {
 
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
-      {(isSubmitting) => <Button disabled={isSubmitting}>{label}</Button>}
+      {(isSubmitting: boolean) => (
+        <Button highlighted disabled={isSubmitting}>
+          {label}
+        </Button>
+      )}
     </form.Subscribe>
   );
 }

@@ -46,7 +46,6 @@ const EnterNameForm = () => {
 
   return (
     <div>
-      <div>Please enter your name:</div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -55,7 +54,9 @@ const EnterNameForm = () => {
       >
         <form.AppField
           name="name"
-          children={(field) => <field.TextField label="Name" />}
+          children={(field) => (
+            <field.TextField label="Please enter your name:" />
+          )}
         />
         <form.AppForm>
           <form.SubmitButton label="Submit" />

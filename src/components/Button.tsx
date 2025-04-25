@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
 export default function Button({
-  highlighted,
+  highlighted = false,
   children,
   ...props
 }: { highlighted: boolean } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
