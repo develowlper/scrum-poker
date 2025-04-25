@@ -16,6 +16,8 @@ import {
   getParticipant,
   getParticipantsForGame,
 } from '../api/participant';
+import useGame from '../hooks/useGame';
+import clsx from 'clsx';
 
 export const Route = createFileRoute('/$gameId')({
   component: RouteComponent,
@@ -132,6 +134,8 @@ const StoryPoints = ({
 const Points = ({ participantId }: { participantId: string }) => {
   const { gameId } = Route.useParams();
 
+  const { resultsShown } = useGame(gameId);
+
   const { data, isPending } = useQuery({
     queryKey: ['result', participantId],
     queryFn: () => getResult(gameId, participantId),
@@ -142,7 +146,16 @@ const Points = ({ participantId }: { participantId: string }) => {
     return <div>Loading...</div>;
   }
 
-  return <div>{data?.points ? <div>YES</div> : <div>-</div>}</div>;
+  return (
+    <div
+      className={clsx(
+        'p-1 text-xl aspect-square w-8 h-8',
+        data?.points && 'bg-lime-700',
+      )}
+    >
+      {(resultsShown && data?.points) || '-'}
+    </div>
+  );
 };
 
 const Player = ({ id, participant }: { id: string; participant: string }) => {
@@ -184,6 +197,33 @@ const PlayerList = () => {
   );
 };
 
+const Options = () => {
+  const { gameId } = Route.useParams();
+  const { showResults, hideResults, resultsShown, resetGame } = useGame(gameId);
+
+  return (
+    <div className="flex gap-4 items-center">
+      <button
+        className="btn btn-primary"
+        onClick={() => showResults()}
+        disabled={resultsShown}
+      >
+        Show Results
+      </button>
+      <button
+        disabled={!resultsShown}
+        className="btn btn-secondary"
+        onClick={() => hideResults()}
+      >
+        Hide Results
+      </button>
+      <button onClick={() => resetGame()} className="btn btn-error">
+        Reset
+      </button>
+    </div>
+  );
+};
+
 function RouteComponent() {
   const { gameId } = Route.useParams();
 
@@ -211,6 +251,7 @@ function RouteComponent() {
           <Headline text={`Welcome ${player?.name} to game${data?.name}`} />
           <StoryPoints gameId={gameId} playerId={player?.publicId} />
           <PlayerList />
+          <Options />
         </>
       ) : (
         <EnterNameForm />
