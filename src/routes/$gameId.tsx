@@ -8,15 +8,18 @@ import Button from '../components/Button';
 import { useUserStore } from '../stores/user';
 import { useAppForm } from '../hooks/form';
 import { z } from 'zod';
-import { createPlayer, getPlayer } from '../api/player';
+import { createPlayer, getPlayer, ICreateUser } from '../api/player';
 import { createResult, getResult, ICreateResult } from '../api/result';
 import { useMemo } from 'react';
+import { createParticipant, getParticipantsForGame } from '../api/participant';
 
 export const Route = createFileRoute('/$gameId')({
   component: RouteComponent,
 });
 
 const EnterNameForm = () => {
+  const { gameId } = Route.useParams();
+
   const setId = useUserStore((state) => state.setId);
 
   const form = useAppForm({
@@ -28,8 +31,9 @@ const EnterNameForm = () => {
         name: z.string().min(1),
       }),
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value }: { value: ICreateUser }) => {
       const { publicId } = await createPlayer(value);
+      await createParticipant({ game: gameId, player: publicId });
       setId(publicId);
     },
   });
@@ -108,6 +112,41 @@ const StoryPoints = ({
   );
 };
 
+const Player = ({ id }: { id: string }) => {
+  const { data, isPending } = useQuery({
+    queryKey: ['player', id],
+    queryFn: () => getPlayer(id),
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  return <div>{data?.name}</div>;
+};
+
+const PlayerList = () => {
+  const { gameId } = Route.useParams();
+  const { data, isPending } = useQuery({
+    queryKey: ['participants', gameId],
+    queryFn: () => getParticipantsForGame(gameId),
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      {data?.map((player) => <Player key={player.id} id={player.player} />)}
+    </div>
+  );
+
+  console.log(data);
+
+  return 'PLAYERS';
+};
+
 function RouteComponent() {
   const { gameId } = Route.useParams();
 
@@ -134,6 +173,7 @@ function RouteComponent() {
         <>
           <Headline text={`Welcome ${player?.name} to game${data?.name}`} />
           <StoryPoints gameId={gameId} playerId={player?.publicId} />
+          <PlayerList />
         </>
       ) : (
         <EnterNameForm />
