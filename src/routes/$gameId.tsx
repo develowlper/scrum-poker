@@ -70,12 +70,14 @@ const StoryPoints = ({
   const queryClient = useQueryClient();
 
   const savePointsMutation = useMutation({
-    mutationFn: async (value: ICreateResult) => {
-      const res = await createResult(value);
-      console.log(res);
-      queryClient.invalidateQueries({ queryKey: resultQueryKey });
-    },
+    mutationFn: async (value: ICreateResult) => createResult(value),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: resultQueryKey }),
   });
+
+  const { variables, isPending: isMutating } = savePointsMutation;
+
+  console.log(savePointsMutation.variables);
 
   const { data: result, isPending } = useQuery({
     queryKey: resultQueryKey,
@@ -86,12 +88,14 @@ const StoryPoints = ({
     return <div>Loading...</div>;
   }
 
+  const currentPoints = isMutating ? variables?.points : result?.points;
+
   return (
     <div>
       <div>Please enter your story points:</div>
       {STORY_PONTS.map((point) => (
         <Button
-          highlighted={result?.points === point}
+          highlighted={currentPoints === point}
           key={point}
           onClick={() =>
             savePointsMutation.mutateAsync({ points: point, gameId, playerId })
