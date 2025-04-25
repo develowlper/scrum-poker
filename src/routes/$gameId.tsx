@@ -129,7 +129,23 @@ const StoryPoints = ({
   );
 };
 
-const Player = ({ id }: { id: string }) => {
+const Points = ({ participantId }: { participantId: string }) => {
+  const { gameId } = Route.useParams();
+
+  const { data, isPending } = useQuery({
+    queryKey: ['result', participantId],
+    queryFn: () => getResult(gameId, participantId),
+    refetchInterval: 3000,
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  return <div>{data?.points ? <div>YES</div> : <div>-</div>}</div>;
+};
+
+const Player = ({ id, participant }: { id: string; participant: string }) => {
   const { data, isPending } = useQuery({
     queryKey: ['player', id],
     queryFn: () => getPlayer(id),
@@ -139,7 +155,12 @@ const Player = ({ id }: { id: string }) => {
     return <div>Loading...</div>;
   }
 
-  return <div>{data?.name}</div>;
+  return (
+    <div className="flex gap-2">
+      <div>{data?.name}</div>
+      <Points participantId={participant} />
+    </div>
+  );
 };
 
 const PlayerList = () => {
@@ -147,6 +168,7 @@ const PlayerList = () => {
   const { data, isPending } = useQuery({
     queryKey: ['participants', gameId],
     queryFn: () => getParticipantsForGame(gameId),
+    refetchInterval: 3000,
   });
 
   if (isPending) {
@@ -155,13 +177,11 @@ const PlayerList = () => {
 
   return (
     <div>
-      {data?.map((player) => <Player key={player.id} id={player.player} />)}
+      {data?.map((player) => (
+        <Player participant={player.id} key={player.id} id={player.player} />
+      ))}
     </div>
   );
-
-  console.log(data);
-
-  return 'PLAYERS';
 };
 
 function RouteComponent() {
