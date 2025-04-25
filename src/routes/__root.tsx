@@ -4,15 +4,18 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 export const Route = createRootRoute({
   component: () => (
     <>
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>{' '}
-        <Link to="/about" className="[&.active]:font-bold">
-          About
-        </Link>
-      </div>
-      <hr />
+      <nav className="navbar shadow-sm bg-neutral text-neutral-content gap-4">
+        <img src="/poker.png" alt="logo" className="h-10 w-10" />
+        <div className="navbar-center flex gap-2">
+          <Link to="/" className="link [&.active]:font-bold">
+            Home
+          </Link>{' '}
+          <Link to="/about" className="link [&.active]:font-bold">
+            About
+          </Link>
+        </div>
+      </nav>
+
       <Outlet />
       <TanStackRouterDevtools />
       <ReactQueryDevtools initialIsOpen={false} />
