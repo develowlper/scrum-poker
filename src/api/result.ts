@@ -6,6 +6,11 @@ export interface ICreateResult {
   participantId: string;
 }
 
+export interface ResultForGame {
+  points: number;
+  participant_id: string;
+}
+
 export async function createResult(values: ICreateResult) {
   const { data: hasResult } = await supabase
     .from('game_results')
@@ -56,7 +61,9 @@ export async function getResult(gameId: string, participantId: string) {
   return data[0];
 }
 
-export async function getResultsForGame(gameId: string) {
+export async function getResultsForGame(
+  gameId: string,
+): Promise<ResultForGame[]> {
   const { data } = await supabase
     .from('game_results')
     .select('points, participant_id')

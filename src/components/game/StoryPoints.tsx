@@ -43,7 +43,7 @@ export default function StoryPoints() {
   const currentPoints = isMutating ? variables?.points : result?.points;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <div className="text-lg">Please enter your story points:</div>
       <ul className="grid grid-cols-3 gap-3">
         {STORY_PONTS.map((point) => {

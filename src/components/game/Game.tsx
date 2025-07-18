@@ -4,6 +4,7 @@ import { useUserStore } from '../../stores/user';
 import { ensureParticipant } from '../../api/participant';
 
 import GameTitle from './GameTitle';
+import GameOptions from './GameOptions';
 
 import StoryPoints from './StoryPoints';
 import PlayerList from './PaylerList';
@@ -39,12 +40,14 @@ export default function Game({ gameId }: GameProps) {
     <div className="card card-md bg-base-200 w-full">
       <div className="card-body">
         <GameTitle />
-
-        <div className="grid grid-cols-2 gap-6 mt-6">
+        <div className="flex justify-center mt-6">
+          <GameOptions />
+        </div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-3 ">
           <div className="flex justify-end ">
             <StoryPoints />
           </div>
-          <div>
+          <div className="flex flex-col gap-4">
             {match(game)
               .with({ isPending: true }, () => <div>Loading...</div>)
               .with({ isPending: false, game: { show_results: true } }, () => (

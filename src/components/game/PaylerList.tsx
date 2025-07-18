@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import useGameId from '../../hooks/useGameId';
-import { getParticipantsForGame } from '../../api/participant';
 import { useUserStore } from '../../stores/user';
 import { getResult } from '../../api/result';
 import usePlayer from '../../hooks/usePlayer';
 import clsx from 'clsx';
+import useParticipantsForGame from '../../hooks/useParticipantsForGame';
 
 const Player = ({ id, participant }: { id: string; participant: string }) => {
   const gameId = useGameId();
@@ -39,13 +39,7 @@ const Player = ({ id, participant }: { id: string; participant: string }) => {
 };
 
 export default function PlayerList() {
-  const gameId = useGameId();
-
-  const { data, isPending } = useQuery({
-    queryKey: ['participants', gameId],
-    queryFn: () => getParticipantsForGame(gameId),
-    refetchInterval: 3000,
-  });
+  const { data, isPending } = useParticipantsForGame();
 
   if (isPending) {
     return <div>Loading...</div>;

@@ -2,7 +2,6 @@ import useGame from '../../hooks/useGame';
 import useGameId from '../../hooks/useGameId';
 import usePlayer from '../../hooks/usePlayer';
 import Headline from '../Headline';
-import GameOptions from './GameOptions';
 
 const useHeadLineData = () => {
   const gameId = useGameId();
@@ -25,11 +24,9 @@ export default function GameTitle() {
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex-1"></div>
-      <Headline className="text-3xl" text={`${game?.name}`} />
-      <div className="flex-1 flex justify-end">
-        <GameOptions />
+    <div className="flex justify-center">
+      <div className="flex flex-col gap-2 items-center">
+        <Headline className="text-3xl" text={`${game?.name}`} />
       </div>
     </div>
   );

@@ -11,5 +11,5 @@ export default function useResults() {
     refetchInterval: 10000,
   });
 
-  return 'results';
+  return { results, isPending };
 }

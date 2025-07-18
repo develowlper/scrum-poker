@@ -34,3 +34,16 @@ export const getPlayer = async (publicId: string) => {
 
   return data;
 };
+
+export const getPlayersByIds = async (ids: string[]) => {
+  const { data } = await supabase
+    .from('player')
+    .select('publicId, name')
+    .in('publicId', ids);
+
+  if (!data) {
+    throw new Error('Players not found');
+  }
+
+  return data;
+};
