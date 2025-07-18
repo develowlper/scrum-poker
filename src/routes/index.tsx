@@ -38,24 +38,26 @@ function Index() {
   });
 
   return (
-    <div className="flex flex-col p-2 gap-2">
-      <form
-        className="w-[350px] flex flex-col gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
-        <AppField
-          name="name"
-          children={(field) => (
-            <field.TextField label="Enter a name for your game:" />
-          )}
-        />
-        <AppForm>
-          <SubmitButton label="Submit" />
-        </AppForm>
-      </form>
+    <div className="flex justify-center">
+      <div className="flex flex-col p-2 gap-2">
+        <form
+          className="w-[350px] flex flex-col gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          <AppField
+            name="name"
+            children={(field) => (
+              <field.TextField label="Enter a name for your game:" />
+            )}
+          />
+          <AppForm>
+            <SubmitButton label="Submit" />
+          </AppForm>
+        </form>
+      </div>
     </div>
   );
 }
