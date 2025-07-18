@@ -30,8 +30,8 @@ export async function getParticipantsForGame(
   gameId: string,
 ): Promise<Participant[]> {
   const { data } = await supabase
-    .from<Participant>('participants')
-    .select('player, id')
+    .from('participants')
+    .select('player, id, game')
     .eq('game', gameId);
 
   if (!data) {
@@ -45,14 +45,32 @@ export async function getParticipant(
   playerId: string,
 ): Promise<Participant> {
   const { data } = await supabase
-    .from<Participant>('participants')
-    .select('id')
+    .from('participants')
+    .select('id, game, player')
     .eq('game', gameId)
     .eq('player', playerId)
     .single();
 
   if (!data) {
     throw new Error('Participant not found');
+  }
+
+  return data;
+}
+
+export async function ensureParticipant(
+  gameId: string,
+  playerId: string,
+): Promise<Participant> {
+  const { data } = await supabase
+    .from('participants')
+    .select('id, game, player')
+    .eq('game', gameId)
+    .eq('player', playerId)
+    .single();
+
+  if (!data) {
+    return createParticipant({ game: gameId, player: playerId });
   }
 
   return data;

@@ -32,7 +32,7 @@ function Index() {
     onSubmit: async ({ value }: { value: ICreateGame }) => {
       // Do something with form data
       const res = await saveGameMutation.mutateAsync(value);
-      navigate({ to: `/$gameId`, params: { gameId: res.publicId } });
+      navigate({ to: `/games/$gameId`, params: { gameId: res.publicId } });
       console.log(res);
     },
   });

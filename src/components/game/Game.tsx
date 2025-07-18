@@ -1,70 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { getGame } from '../api/game';
-import Headline from '../components/Headline';
-import { STORY_PONTS } from '../const';
-import Button from '../components/Button';
-
-import { useUserStore } from '../stores/user';
-import { useAppForm } from '../hooks/form';
-import { z } from 'zod';
-import { createPlayer, getPlayer, ICreateUser } from '../api/player';
-import { createResult, getResult, ICreateResult } from '../api/result';
-import { useMemo } from 'react';
+import { useUserStore } from '../../stores/user';
+import { getGame } from '../../api/game';
+import { getPlayer } from '../../api/player';
+import Headline from '../Headline';
 import {
-  createParticipant,
+  ensureParticipant,
   getParticipant,
   getParticipantsForGame,
-} from '../api/participant';
-import useGame from '../hooks/useGame';
+} from '../../api/participant';
+import { useMemo } from 'react';
+import { createResult, getResult, ICreateResult } from '../../api/result';
+import Button from '../Button';
+import { STORY_PONTS } from '../../const';
+import { useParams } from '@tanstack/react-router';
+import useGame from '../../hooks/useGame';
 import clsx from 'clsx';
-
-export const Route = createFileRoute('/$gameId')({
-  component: RouteComponent,
-});
-
-const EnterNameForm = () => {
-  const { gameId } = Route.useParams();
-
-  const setId = useUserStore((state) => state.setId);
-
-  const form = useAppForm({
-    defaultValues: {
-      name: '',
-    },
-    validators: {
-      onChange: z.object({
-        name: z.string().min(1),
-      }),
-    },
-    onSubmit: async ({ value }: { value: ICreateUser }) => {
-      const { publicId } = await createPlayer(value);
-      await createParticipant({ game: gameId, player: publicId });
-      setId(publicId);
-    },
-  });
-
-  return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          form.handleSubmit();
-        }}
-      >
-        <form.AppField
-          name="name"
-          children={(field) => (
-            <field.TextField label="Please enter your name:" />
-          )}
-        />
-        <form.AppForm>
-          <form.SubmitButton label="Submit" />
-        </form.AppForm>
-      </form>
-    </div>
-  );
-};
 
 const StoryPoints = ({
   gameId,
@@ -133,7 +83,11 @@ const StoryPoints = ({
 };
 
 const Points = ({ participantId }: { participantId: string }) => {
-  const { gameId } = Route.useParams();
+  const { gameId } = useParams({ strict: false });
+
+  if (!gameId) {
+    throw new Error('Game ID is required');
+  }
 
   const { resultsShown } = useGame(gameId);
 
@@ -178,7 +132,12 @@ const Player = ({ id, participant }: { id: string; participant: string }) => {
 };
 
 const PlayerList = () => {
-  const { gameId } = Route.useParams();
+  const { gameId } = useParams({ strict: false });
+
+  if (!gameId) {
+    throw new Error('Game ID is required');
+  }
+
   const { data, isPending } = useQuery({
     queryKey: ['participants', gameId],
     queryFn: () => getParticipantsForGame(gameId),
@@ -199,7 +158,12 @@ const PlayerList = () => {
 };
 
 const Options = () => {
-  const { gameId } = Route.useParams();
+  const { gameId } = useParams({ strict: false });
+
+  if (!gameId) {
+    throw new Error('Game ID is required');
+  }
+
   const { showResults, hideResults, resultsShown, resetGame } = useGame(gameId);
 
   return (
@@ -225,38 +189,42 @@ const Options = () => {
   );
 };
 
-function RouteComponent() {
-  const { gameId } = Route.useParams();
+type GameProps = {
+  gameId: string;
+};
+
+export default function Game({ gameId }: GameProps) {
+  const id = useUserStore((state) => state.id);
+
+  if (!id) {
+    throw new Error('User ID is required');
+  }
 
   const { data, isPending } = useQuery({
     queryKey: ['game', gameId],
     queryFn: () => getGame(gameId),
   });
 
-  const id = useUserStore((state) => state.id);
-
   const { data: player } = useQuery({
     queryKey: ['player', id],
-    queryFn: () => getPlayer(id as string),
-    enabled: !!id,
+    queryFn: () => getPlayer(id),
   });
 
-  if (isPending) {
+  const { data: participant } = useQuery({
+    queryKey: ['participant', gameId, id],
+    queryFn: () => ensureParticipant(gameId, id),
+  });
+
+  if (isPending || !participant) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
-      {id ? (
-        <>
-          <Headline text={`Welcome ${player?.name} to game${data?.name}`} />
-          <StoryPoints gameId={gameId} playerId={player?.publicId} />
-          <PlayerList />
-          <Options />
-        </>
-      ) : (
-        <EnterNameForm />
-      )}
-    </div>
+    <>
+      <Headline text={`Welcome ${player?.name} to game ${data?.name}`} />
+      <StoryPoints gameId={gameId} playerId={player?.publicId} />
+      <PlayerList />
+      <Options />
+    </>
   );
 }
