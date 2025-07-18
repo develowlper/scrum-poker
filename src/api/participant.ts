@@ -12,8 +12,6 @@ export type Participant = {
 };
 
 export const createParticipant = async (values: ICreateParticipant) => {
-  console.log(values);
-
   const { data } = await supabase
     .from('participants')
     .insert([values])
@@ -67,11 +65,11 @@ export async function ensureParticipant(
     .select('id, game, player')
     .eq('game', gameId)
     .eq('player', playerId)
-    .single();
+    .limit(1);
 
-  if (!data) {
+  if (!data || data?.length < 1) {
     return createParticipant({ game: gameId, player: playerId });
   }
 
-  return data;
+  return data[0];
 }

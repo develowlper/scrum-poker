@@ -10,6 +10,7 @@ export default function useGame(gameId: string) {
   const { data: game, isPending } = useQuery({
     queryKey,
     queryFn: () => getGame(gameId),
+    refetchInterval: 1000,
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey });

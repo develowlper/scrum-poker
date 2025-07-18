@@ -55,3 +55,16 @@ export async function getResult(gameId: string, participantId: string) {
 
   return data[0];
 }
+
+export async function getResultsForGame(gameId: string) {
+  const { data } = await supabase
+    .from('game_results')
+    .select('points, participant_id')
+    .eq('game_id', gameId);
+
+  if (!data) {
+    throw new Error('Results not found');
+  }
+
+  return data;
+}
