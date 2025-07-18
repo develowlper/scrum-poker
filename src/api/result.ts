@@ -12,13 +12,15 @@ export async function createResult(values: ICreateResult) {
     .select('id')
     .eq('game_id', values.gameId)
     .eq('participant_id', values.participantId)
-    .single();
+    .limit(1);
 
-  if (hasResult) {
+  if (hasResult && hasResult.length > 0) {
+    const result = hasResult[0];
+
     return supabase
       .from('game_results')
       .update({ points: values.points })
-      .eq('id', hasResult.id);
+      .eq('id', result.id);
   }
 
   const { data } = await supabase
@@ -45,7 +47,11 @@ export async function getResult(gameId: string, participantId: string) {
     .select('points')
     .eq('game_id', gameId)
     .eq('participant_id', participantId)
-    .single();
+    .limit(1);
 
-  return data;
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  return data[0];
 }

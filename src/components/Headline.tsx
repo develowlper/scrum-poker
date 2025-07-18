@@ -1,7 +1,13 @@
-export default function Headline({ text }: { text: string }) {
+export default function Headline({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
   return (
     <div>
-      <h1>{text}</h1>
+      <h1 className={className}>{text}</h1>
     </div>
   );
 }

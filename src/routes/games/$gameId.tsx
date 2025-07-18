@@ -59,15 +59,11 @@ function RouteComponent() {
 
   const id = useUserStore((state) => state.id);
 
-  return (
-    <div>
-      {id ? (
-        <>
-          <Game gameId={gameId} />
-        </>
-      ) : (
-        <EnterNameForm />
-      )}
+  return id ? (
+    <Game gameId={gameId} />
+  ) : (
+    <div className="flex justify-center">
+      <EnterNameForm />
     </div>
   );
 }

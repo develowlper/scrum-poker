@@ -25,7 +25,7 @@ export const Route = createRootRoute({
           'flex-1 flex flex-col justify-center items-center py-4 px-2',
         )}
       >
-        <div className="max-w-lg">{<Outlet />}</div>
+        <div className="w-full">{<Outlet />}</div>
       </div>
 
       <TanStackRouterDevtools />
