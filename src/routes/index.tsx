@@ -33,7 +33,6 @@ function Index() {
       // Do something with form data
       const res = await saveGameMutation.mutateAsync(value);
       navigate({ to: `/games/$gameId`, params: { gameId: res.publicId } });
-      console.log(res);
     },
   });
 
