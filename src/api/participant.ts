@@ -73,3 +73,25 @@ export async function ensureParticipant(
 
   return data[0];
 }
+
+export async function removeParticipant(
+  gameId: string,
+  playerId: string,
+): Promise<void> {
+  const participant = await getParticipant(gameId, playerId);
+
+  console.log(participant.id);
+
+  const { error, data } = await supabase
+    .from('participants')
+    .delete()
+    .eq('id', participant.id)
+    .select();
+
+  console.log(data, error);
+
+  if (error) {
+    console.error('Failed to remove participant', error);
+    throw new Error('Failed to remove participant');
+  }
+}

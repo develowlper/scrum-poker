@@ -1,6 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-
-import { CgSearch } from 'react-icons/cg';
+import { createFileRoute } from '@tanstack/react-router';
 
 import { useUserStore } from '../../../stores/user';
 import { useAppForm } from '../../../hooks/form';

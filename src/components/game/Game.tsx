@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUserStore } from '../../stores/user';
 
-import { ensureParticipant } from '../../api/participant';
+import { ensureParticipant, removeParticipant } from '../../api/participant';
 
 import GameTitle from './GameTitle';
 import GameOptions from './GameOptions';
@@ -16,6 +16,7 @@ import GameHeader from './GameHeader';
 import ResetGameButton from '../ResetGameButton';
 import { Link } from '@tanstack/react-router';
 import JoinAsSpectator from '../JoinAsSpectator';
+import { useEffect } from 'react';
 
 type GameProps = {
   gameId: string;
@@ -35,6 +36,12 @@ export default function Game({ gameId }: GameProps) {
     queryFn: () => ensureParticipant(gameId, id),
     refetchInterval: 1000,
   });
+
+  useEffect(() => {
+    return () => {
+      removeParticipant(gameId, id);
+    };
+  }, [gameId, id]);
 
   if (!participant) {
     return <div>Loading...</div>;
