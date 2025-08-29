@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { useUserStore } from '../../stores/user';
-import { useAppForm } from '../../hooks/form';
+import { useUserStore } from '../../../stores/user';
+import { useAppForm } from '../../../hooks/form';
 import { z } from 'zod';
-import { createPlayer, ICreateUser } from '../../api/player';
-import { createParticipant } from '../../api/participant';
-import Game from '../../components/game/Game';
+import { createPlayer, ICreateUser } from '../../../api/player';
+import { createParticipant } from '../../../api/participant';
+import Game from '../../../components/game/Game';
 
-export const Route = createFileRoute('/games/$gameId')({
+export const Route = createFileRoute('/games/$gameId/')({
   component: RouteComponent,
 });
 

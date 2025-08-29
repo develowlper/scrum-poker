@@ -1,6 +1,5 @@
 import useGame from '../../hooks/useGame';
 import useGameId from '../../hooks/useGameId';
-import usePlayer from '../../hooks/usePlayer';
 import Headline from '../Headline';
 
 const useHeadLineData = () => {
@@ -11,15 +10,14 @@ const useHeadLineData = () => {
   }
 
   const { game, isPending: isGamePending } = useGame(gameId);
-  const { player, isPending: isPlayerPending } = usePlayer();
 
-  return { game, player, isGamePending, isPlayerPending };
+  return { game, isGamePending };
 };
 
 export default function GameTitle() {
-  const { game, isGamePending, isPlayerPending } = useHeadLineData();
+  const { game, isGamePending } = useHeadLineData();
 
-  if (isGamePending || isPlayerPending) {
+  if (isGamePending) {
     return <div>Loading...</div>;
   }
 

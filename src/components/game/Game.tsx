@@ -14,6 +14,7 @@ import { match } from 'ts-pattern';
 import Results from './Results';
 import GameHeader from './GameHeader';
 import ResetGameButton from '../ResetGameButton';
+import { Link } from '@tanstack/react-router';
 
 type GameProps = {
   gameId: string;
@@ -47,11 +48,19 @@ export default function Game({ gameId }: GameProps) {
             <GameTitle />
           </div>
         }
-        start={<div></div>}
+        start={
+          <Link
+            to="/games/$gameId/spectator"
+            params={{ gameId }}
+            className="btn btn-primary"
+          >
+            Spectate
+          </Link>
+        }
         end={<ResetGameButton />}
       />
       <div className="card-body">
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center ">
           <GameOptions />
         </div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-3 ">
