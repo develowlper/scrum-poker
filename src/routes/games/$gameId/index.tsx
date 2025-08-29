@@ -1,4 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
+
+import { CgSearch } from 'react-icons/cg';
 
 import { useUserStore } from '../../../stores/user';
 import { useAppForm } from '../../../hooks/form';
@@ -6,6 +8,7 @@ import { z } from 'zod';
 import { createPlayer, ICreateUser } from '../../../api/player';
 import { createParticipant } from '../../../api/participant';
 import Game from '../../../components/game/Game';
+import JoinAsSpectator from '../../../components/JoinAsSpectator';
 
 export const Route = createFileRoute('/games/$gameId/')({
   component: RouteComponent,
@@ -22,7 +25,7 @@ const EnterNameForm = () => {
     },
     validators: {
       onChange: z.object({
-        name: z.string().min(1),
+        name: z.string().min(1, 'Name is required'),
       }),
     },
     onSubmit: async ({ value }: { value: ICreateUser }) => {
@@ -33,7 +36,10 @@ const EnterNameForm = () => {
   });
 
   return (
-    <div>
+    <div className="flex flex-col gap-3">
+      <div className="text-lg  mb-1">
+        To join the scrum poker, you need to provide a name.
+      </div>
       <form
         className="flex flex-col gap-2"
         onSubmit={(e) => {
@@ -43,14 +49,14 @@ const EnterNameForm = () => {
       >
         <form.AppField
           name="name"
-          children={(field) => (
-            <field.TextField label="Please enter your name:" />
-          )}
+          children={(field) => <field.TextField label="Enter your name here" />}
         />
         <form.AppForm>
-          <form.SubmitButton label="Submit" />
+          <form.SubmitButton label="Join Poker" />
         </form.AppForm>
       </form>
+      <div>or you can</div>
+      <JoinAsSpectator />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { match } from 'ts-pattern';
 import useGame from '../../hooks/useGame';
 import useGameId from '../../hooks/useGameId';
+import { CgChart, CgLock } from 'react-icons/cg';
 
 export default function Options() {
   const gameId = useGameId();
@@ -20,6 +21,7 @@ export default function Options() {
             className="btn btn-secondary"
             onClick={() => hideResults()}
           >
+            <CgLock />
             Hide Results
           </button>
         ))
@@ -29,6 +31,7 @@ export default function Options() {
             onClick={() => showResults()}
             disabled={resultsShown}
           >
+            <CgChart />
             Show Results
           </button>
         ))}

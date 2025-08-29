@@ -15,6 +15,7 @@ import Results from './Results';
 import GameHeader from './GameHeader';
 import ResetGameButton from '../ResetGameButton';
 import { Link } from '@tanstack/react-router';
+import JoinAsSpectator from '../JoinAsSpectator';
 
 type GameProps = {
   gameId: string;
@@ -48,15 +49,7 @@ export default function Game({ gameId }: GameProps) {
             <GameTitle />
           </div>
         }
-        start={
-          <Link
-            to="/games/$gameId/spectator"
-            params={{ gameId }}
-            className="btn btn-primary"
-          >
-            Spectate
-          </Link>
-        }
+        start={<JoinAsSpectator label="Spectate" />}
         end={<ResetGameButton />}
       />
       <div className="card-body">
