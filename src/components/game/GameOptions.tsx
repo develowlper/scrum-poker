@@ -9,8 +9,7 @@ export default function Options() {
     throw new Error('Game ID is required');
   }
 
-  const { showResults, hideResults, resultsShown, resetGame, game } =
-    useGame(gameId);
+  const { showResults, hideResults, resultsShown, game } = useGame(gameId);
 
   return (
     <div className="flex gap-2 items-center">
@@ -33,10 +32,6 @@ export default function Options() {
             Show Results
           </button>
         ))}
-
-      <button onClick={() => resetGame()} className="btn btn-error">
-        Reset
-      </button>
     </div>
   );
 }

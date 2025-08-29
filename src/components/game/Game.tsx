@@ -7,11 +7,13 @@ import GameTitle from './GameTitle';
 import GameOptions from './GameOptions';
 
 import StoryPoints from './StoryPoints';
-import PlayerList from './PaylerList';
+import PlayerList from './PlayerList';
 import useGame from '../../hooks/useGame';
 
 import { match } from 'ts-pattern';
 import Results from './Results';
+import GameHeader from './GameHeader';
+import ResetGameButton from '../ResetGameButton';
 
 type GameProps = {
   gameId: string;
@@ -38,14 +40,23 @@ export default function Game({ gameId }: GameProps) {
 
   return (
     <div className="card card-md bg-base-200 w-full">
+      <GameHeader
+        className="p-2 bg-base-300"
+        center={
+          <div className="text-lg font-bold">
+            <GameTitle />
+          </div>
+        }
+        start={<div></div>}
+        end={<ResetGameButton />}
+      />
       <div className="card-body">
-        <GameTitle />
         <div className="flex justify-center mt-6">
           <GameOptions />
         </div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-3 ">
           <div className="flex justify-end ">
-            <StoryPoints />
+            <StoryPoints disable={game.game?.show_results === true} />
           </div>
           <div className="flex flex-col gap-4">
             {match(game)

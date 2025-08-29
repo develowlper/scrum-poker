@@ -7,7 +7,7 @@ import Button from '../Button';
 import { STORY_PONTS } from '../../const';
 import clsx from 'clsx';
 
-export default function StoryPoints() {
+export default function StoryPoints({ disable }: { disable: boolean }) {
   const { participant, isParticipantLoading } = useParticipant();
   const gameId = useGameId();
 
@@ -55,6 +55,7 @@ export default function StoryPoints() {
                   'btn-xl  w-full',
                   !highlighted && 'btn-outline',
                 )}
+                disabled={disable}
                 highlighted={highlighted}
                 onClick={() =>
                   savePointsMutation.mutateAsync({

@@ -23,11 +23,5 @@ export default function GameTitle() {
     return <div>Loading...</div>;
   }
 
-  return (
-    <div className="flex justify-center">
-      <div className="flex flex-col gap-2 items-center">
-        <Headline className="text-3xl" text={`${game?.name}`} />
-      </div>
-    </div>
-  );
+  return <Headline className="text-3xl text-center" text={`${game?.name}`} />;
 }
