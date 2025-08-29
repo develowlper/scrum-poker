@@ -14,7 +14,6 @@ import { match } from 'ts-pattern';
 import Results from './Results';
 import GameHeader from './GameHeader';
 import ResetGameButton from '../ResetGameButton';
-import { Link } from '@tanstack/react-router';
 import JoinAsSpectator from '../JoinAsSpectator';
 import { useEffect } from 'react';
 
