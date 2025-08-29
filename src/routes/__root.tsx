@@ -6,7 +6,7 @@ import ThemeDropdown from '../components/ThemeDropdown';
 export const Route = createRootRoute({
   component: () => (
     <>
-      <nav className="navbar shadow-sm bg-primary text-primary-content gap-4">
+      <nav className="navbar shadow-sm bg-base-200 text-base-content gap-4">
         <div className="navbar-start flex gap-2">
           <img src="/poker.png" alt="logo" className="h-10 w-10 navbar-start" />
           <h1 className="text-lg">Planning Poker</h1>

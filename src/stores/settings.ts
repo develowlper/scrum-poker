@@ -9,7 +9,7 @@ type SettingsStore = {
 export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
-      theme: 'dark',
+      theme: 'cyberpunk',
       setTheme: (theme: string) => set({ theme }),
     }),
     { name: 'scrum-poker-settings' },
